@@ -1,22 +1,16 @@
 const hre = require("hardhat");
 
 async function main() {
-  // Get the contract factory
   const RideRegistry = await hre.ethers.getContractFactory("RideRegistry");
+  const contract = await RideRegistry.deploy(); // Deploys the contract
+  await contract.waitForDeployment(); // Use this in newer versions of Hardhat
 
-  // Deploy the contract
-  const rideRegistry = await RideRegistry.deploy();
-
-  // Wait for the contract to be deployed
-  await rideRegistry.waitForDeployment();
-
-  // Get the deployed address
-  const contractAddress = await rideRegistry.getAddress();
-
-  console.log(`RideRegistry deployed to: ${contractAddress}`);
+  const address = await contract.getAddress();
+  console.log("Contract deployed to:", address);
 }
 
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
+

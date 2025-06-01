@@ -68,47 +68,62 @@ const rideStatus=(async (req,res)=>{
 })
 
 
-const completeRide=asyncHandler(async (req,res)=>{
-   const {_id} = req.body;
+const completeRide = asyncHandler(async (req, res) => {
+  const { _id, rating } = req.body;
 
-   const store=await live_ride.findByIdAndUpdate(_id,{status:"Completed"});
+  const store = await live_ride.findByIdAndUpdate(_id, { status: "Completed" });
+  if (!store) {
+    throw new ApiError(400, "Something went wrong while completing Ride");
+  }
 
-   if(!store){
-    return new ApiError(400,"Something went wrong while completing Ride");
-    }
+  const {
+    status: rideStatus,
+    vehicle_type,
+    rider_metamask,
+    rider_name,
+    rider_ratings,
+    driver_metamask,
+    driver_name,
+    driver_ratings,
+    starting,
+    destination,
+    price,
+    date,
+    time,
+    duration,
+  } = await live_ride.findById(_id);
 
-    const {status,vehicle_type,rider_metamask,rider_name,rider_ratings,driver_metamask,driver_name,driver_ratings,starting,destination,price,date,duration}=await live_ride.findById(_id);
+  const new_ride = await ride.create({
+    status: rideStatus,
+    vehicle_type,
+    rider_metamask,
+    rider_name,
+    rider_ratings,
+    driver_metamask,
+    driver_name,
+    driver_ratings: rating,
+    starting,
+    destination,
+    price,
+    date,
+    time,
+    duration,
+  });
 
-    const new_ride= await ride.create({  // Adding data of new user to database.
-        status,
-        vehicle_type,
-        rider_metamask,
-        rider_name,
-        rider_ratings,
-        driver_metamask,
-        driver_name,
-        driver_ratings,
-        starting,
-        destination,
-        price,
-        date,
-        duration
-    });
+  if (!new_ride) {
+    throw new ApiError(400, "Something went wrong while completing Ride");
+  }
 
-    if(!new_ride){
-        return new ApiError(400,"Something went wrong while completing Ride");
-        }
-   
-   const eventDelete = await live_ride.findByIdAndDelete(_id);
-   
-   if(!eventDelete){
-    throw new ApiError(400,"Something went wrong while deleting live ride");
-   }
-   
-   res
-   .status(200)
-   .json( new ApiResponse(200,{},"Ride completed Successfuly"));
-})
+  const eventDelete = await live_ride.findByIdAndDelete(_id);
+  if (!eventDelete) {
+    throw new ApiError(400, "Something went wrong while deleting live ride");
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Ride completed successfully"));
+});
+
 
 const allRides=asyncHandler(async (req,res)=>{
 
@@ -199,19 +214,37 @@ const endRide=asyncHandler(async (req,res)=>{
     
 })
 
-const updateDriverRating=asyncHandler(async (req,res)=>{
-    const {_id,ratings,rides_count}=req.body;
+const updateDriverRating = asyncHandler(async (req, res) => {
+  const { metamask, rating } = req.body;
 
-    const update=await driver.findByIdAndUpdate(_id,{ratings:ratings,rides_count:rides_count});
+  // Use findOne instead of find
+  const driverDetails = await driver.findOne({ metamask });
 
-    if(!update){
-        throw new ApiError(400,"Something went wrong while updating Driver");
-    }
+  if (!driverDetails) {
+    throw new ApiError(404, "Driver not found");
+  }
 
-    res
-    .status(200)
-    .json(new ApiResponse(200,{},"Driver status updated successfully"))
-})
+  // Calculate new ratings properly
+  const previousRating = driverDetails.ratings || 0;
+  const ridesCount = driverDetails.rides_count || 0;
+  const new_ratings = (previousRating * ridesCount + rating) / (ridesCount + 1);
+
+  // Update driver record
+  const update = await driver.findByIdAndUpdate(
+    driverDetails._id,
+    {
+      ratings: new_ratings,
+      rides_count: ridesCount + 1,
+    },
+    { new: true }
+  );
+
+  if (!update) {
+    throw new ApiError(400, "Something went wrong while updating Driver");
+  }
+
+  res.status(200).json(new ApiResponse(200, {}, "Driver status updated successfully"));
+});
 
 const updateRiderRating=asyncHandler(async (req,res)=>{
     const {_id,ratings,rides_count}=req.body;

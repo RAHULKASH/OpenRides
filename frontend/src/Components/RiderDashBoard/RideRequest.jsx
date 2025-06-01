@@ -23,7 +23,7 @@ export const RideRequest = ({auth,state,setState}) => {
   const [currentRides,setCurrentRides]=useState([]);
   const [drivers,setDrivers]=useState([]);
   const [rateView,setRateView]=useState(false);
-  const [rideId,setRideId]=useState(null);
+  const [rideDetails,setRideDetails]=useState({});
  // const navigate=useNavigation();
   const today = new Date();
 
@@ -92,16 +92,14 @@ const vehicleImages = {
     // Run initially
     fetchRideStatusAndOffers();
 
-    // Then run every 60 seconds
+    // Then run every 10 seconds
     const interval = setInterval(() => {
       fetchRideStatusAndOffers();
-    }, 60000);
+    }, 10000);
 
     return () => clearInterval(interval); // cleanup
   }
 }, [auth]);
-
-
   
   async function handleSubmit(e) {
   e.preventDefault();
@@ -153,7 +151,7 @@ const vehicleImages = {
   return (
     <div className="flex flex-col flex-wrap justify-center items-center min-h-screen bg-gray-100 p-8 w-full">
 
-      <Ratings rateView={rateView} setRateView={setRateView} rideId={rideId} setRideId={setRideId}/>
+      <Ratings rateView={rateView} setRateView={setRateView} rideDetails={rideDetails} setRideDetails={setRideDetails}/>
 
       <div className="grid gap-8 grid-cols-1 md:grid-cols-2 w-full max-w-5xl overflow-hidden bg-gray-100">
         {/* Left Section */}
@@ -259,7 +257,7 @@ const vehicleImages = {
       <p className='text-[2rem] text-gray-600 '>Your Rides</p>
       <div className='flex flex-row gap-6 flex-wrap'>
           {currentRides.map((ride) => {
-            return <RideStatusCard key={ride._id} ride={ride} rateView={rateView} setRateView={setRateView} setRideId={setRideId}/>;
+            return <RideStatusCard key={ride._id} ride={ride} rateView={rateView} setRateView={setRateView} setRideDetails={setRideDetails} />;
           })}
       </div>
       </div>

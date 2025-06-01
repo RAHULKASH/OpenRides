@@ -5,14 +5,14 @@ import {toast} from 'react-toastify';
 import { getContract } from "../../web3/contract.js";
 
 
-export const RideStatusCard = ({ride,rateView,setRateView,setRideId}) => {
+export const RideStatusCard = ({ride,rateView,setRateView,setRideDetails}) => {
 
 
 async function handleCompleteRide(){
     alert("Do you want to complete your ride!");
     if (!confirm) return;
     setRateView(true);
-    setRideId(ride._id);
+    setRideDetails(ride);
   }
 
   async function handleEndRide() {

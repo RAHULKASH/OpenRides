@@ -42,13 +42,13 @@ export const AvailableRideRequest = ({auth}) => {
 }, [auth]);
 
   return (
-    <div>
+    <div className='w-full'>
 
     {activeRides.length!=0 &&
     
           <div className='w-full  p-8'>
           <p className='text-[2rem] text-gray-600 '>Your Active Rides</p>
-          <div className='flex flex-row gap-6 flex-wrap items-center justify-evenly'>
+          <div className='flex flex-row gap-6 flex-wrap  justify-evenly'>
            {activeRides.map((ride) => {
             return <ActiveRidesCard ride={ride} key={ride._id}/>;
            })}

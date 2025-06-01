@@ -139,6 +139,39 @@ const allRides=asyncHandler(async (req,res)=>{
     .json(new ApiResponse(200,events,"All Rides"))
 })
 
+const allDriverRides=asyncHandler(async (req,res)=>{
+
+    const {driver_metamask}=req.body;
+
+    const events=await ride.find({ driver_metamask });
+
+   if (events.length === 0) {
+        throw new ApiError(400, "No Rides found");
+    }
+    res
+    .status(200)
+    .json(new ApiResponse(200,events,"All Rides"))
+})
+
+const allRiderRides = asyncHandler(async (req, res) => {
+    const { rider_metamask } = req.body;
+
+    if (!rider_metamask) {
+        throw new ApiError(400, "Metamask address is required");
+    }
+
+    const events = await ride.find({ rider_metamask });
+
+    console.log(events);
+
+    if (events.length === 0) {
+        throw new ApiError(400, "No Rides found");
+    }
+
+    res.status(200).json(new ApiResponse(200, events, "All Rides"));
+});
+
+
 const riderDetails=asyncHandler(async (req,res)=>{
 
     const {_id}=req.query;
@@ -344,6 +377,8 @@ export {
     rideStatus,
     completeRide,
     allRides,
+    allDriverRides,
+    allRiderRides,
     riderDetails,
     driverDetails,
     endRide,

@@ -1,5 +1,5 @@
 import {Router} from "express";
-import {requestRide,requestedRides,rideStatus,completeRide,allRides,riderDetails,driverDetails,endRide,updateDriverRating,updateRiderRating,offerRide,rideAccepted,allOffers,getAvailableDrivers} from "../Controllers/events.controller.js";
+import {requestRide,requestedRides,rideStatus,completeRide,allRides,riderDetails,driverDetails,endRide,updateDriverRating,updateRiderRating,offerRide,rideAccepted,allOffers,getAvailableDrivers,allDriverRides,allRiderRides} from "../Controllers/events.controller.js";
 
 const router=Router();
 
@@ -17,6 +17,12 @@ router.route("/completeRide").put(completeRide);
 
 //route for all Rides
 router.route("/allRides").post(allRides);
+
+//route for all Rides
+router.route("/allRiderRides").post(allRiderRides);
+
+//route for all Rides
+router.route("/allDriverRides").post(allDriverRides);
 
 //route for Rider Detais
 router.route("/riderDetails").get(riderDetails);

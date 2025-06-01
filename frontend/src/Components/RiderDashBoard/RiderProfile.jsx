@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 
-export const RiderProfile = () => {
+export const RiderProfile = ({auth}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [rider, setRider] = useState({
-    name: "Jane Smith",
-    age: 28,
-    phone: "+1 987 654 3210",
-    email: "jane.smith@example.com",
-    rating: 4.6,
-    riderImage: "https://via.placeholder.com/100", // Replace with actual image
+    name: auth.name,
+    gender: auth.gender,
+    phone: auth.number,
+    email: auth.email,
+    rating: 4,
+    riderImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRH87TKQrWcl19xly2VNs0CjBzy8eaKNM-ZpA&s", // Replace with actual image
   });
 
   const handleChange = (e) => {
@@ -73,14 +73,14 @@ export const RiderProfile = () => {
         {/* Info Section */}
         <div className="md:col-span-2 space-y-2 text-gray-800">
           <div className="grid grid-cols-2 gap-4">
-            {["name", "age", "phone", "email", "rating"].map((field) => (
+            {["name", "gender", "phone", "email", "rating"].map((field) => (
               <div key={field}>
                 <label className="font-medium capitalize">
                   {field.replace(/([A-Z])/g, " $1")}:
                 </label>
                 {isEditing ? (
                   <input
-                    type={field === "age" || field === "rating" ? "number" : "text"}
+                    type={field === "geder" || field === "rating" ? "number" : "text"}
                     name={field}
                     value={rider[field]}
                     onChange={handleChange}
